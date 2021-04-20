@@ -215,7 +215,6 @@ def weather_status(message):
                          f'Ощущается как {weather_for_user["feels_like"]}!\n'
                          f'Скорость ветра - {weather_for_user["wind"]}.',
                          reply_markup=markup)
-        bot.send_message(user_id, template.start())
         change_data('states', user_id, 'main')
     elif message.text == '/back':
         bot.send_message(user_id, template.start(), reply_markup=markup)
