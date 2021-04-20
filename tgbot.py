@@ -28,24 +28,26 @@ MONTH = {
     12: 'декабря',
 }
 
-states = {}
-cities = {}
-geo = {}
+# states = {}
+# cities = {}
+# geo = {}
 
 try:
-    data = json.load(open('db/data.json', 'r', encoding='utf-8'))
+    data = json.load(open('data.json', 'r', encoding='utf-8'))
 except FileNotFoundError:
     data = {
         'states': {},
         'cities': {},
         'geo': {},
     }
+    with open('data.json', 'w') as data_json:
+        json.dump(data, data_json)
 
 
 def change_data(key, user_id, value):
     data[key][user_id] = value
     json.dump(data,
-              open('db/data.json', 'w', encoding='utf-8'),
+              open('data.json', 'w', encoding='utf-8'),
               indent=2,
               ensure_ascii=False)
 
