@@ -1,11 +1,12 @@
-import os
-import requests
 import json
+import os
 from datetime import date, timedelta
+
+import requests
 import telebot
 from telebot import types
-import tg_text as template
 
+import tg_text as template
 
 tg_bot_token = os.environ['TG_BOT_TOKEN']
 open_weather_token = os.environ['OWM_TOKEN']
@@ -210,10 +211,11 @@ def weather_status(message):
     }
     if str(message.text).isdigit() and int(message.text) in [i for i in range(today.day, day3.day + 1)]:
         bot.send_message(user_id,
-                         f'Температура от {weather_for_user["temp_min"]} до {weather_for_user["temp_max"]}, '
-                         f'{str(weather_for_user["description"]).capitalize()}!\n'
-                         f'Ощущается как {weather_for_user["feels_like"]}!\n'
-                         f'Скорость ветра - {weather_for_user["wind"]}.',
+                         f'Температура от {round(weather_for_user["temp_min"], 1)}°C '
+                         f'до {round(weather_for_user["temp_max"], 1)}°C\n'
+                         f'На улице сегодня - {weather_for_user["description"]}\n'
+                         f'Ощущается как {round(weather_for_user["feels_like"], 1)}°C\n'
+                         f'Скорость ветра - {weather_for_user["wind"]} м/с.',
                          reply_markup=markup)
         change_data('states', user_id, 'main')
     elif message.text == '/back':
@@ -228,11 +230,14 @@ def weather_status(message):
 
         bot.send_message(user_id,
                          'Неверно введена дата! Попробуйте еще раз!\n'
+                         f'ПРОГНОЗ ПОГОДЫ ДЛЯ ГОРОДА - {str(data["cities"][user_id]).upper()} : \n'
                          f'Сегодня: {today.day} {MONTH[today.month]} 🗓️\nНа какую дату? 🗂️\n'
-                         f'Можно узнать погоду до {day3.day} {MONTH[day3.month]}, '
-                         f'просто введя доступное число 👍\n'
-                         f'Например - {today.day}',
-                         reply_markup=markup)
+                         f'Доступные даты: {today.day} {MONTH[today.month]}, '
+                         f'{day1.day} {MONTH[day1.month]}, '
+                         f'{day2.day} {MONTH[day2.month]}, '
+                         f'{day3.day} {MONTH[day3.month]}.\n'
+                         f'Просто введи доступное число 👍\n'
+                         f'Например - {day2.day}', reply_markup=markup)
 
 
 def weather_geo_check(message):
@@ -252,11 +257,11 @@ def weather_geo_check(message):
     weather_request = requests.get(weather_geo, params=params)
     weather = weather_request.json()
     bot.send_message(user_id,
-                     f'Температура утром - {weather["daily"][0]["temp"]["morn"]}°C\n'
-                     f'Днем - {weather["daily"][0]["temp"]["day"]}°C\n'
-                     f'Вечером - {weather["daily"][0]["temp"]["eve"]}°C\n'
+                     f'Температура утром {round(weather["daily"][0]["temp"]["morn"], 1)}°C\n'
+                     f'Днем {round(weather["daily"][0]["temp"]["day"], 1)}°C\n'
+                     f'Вечером {round(weather["daily"][0]["temp"]["eve"], 1)}°C\n'
                      f'На улице сегодня - {weather["daily"][0]["weather"][0]["description"]}\n'
-                     f'Ощущается как {weather["daily"][0]["feels_like"]["day"]}°C\n'
+                     f'Ощущается как {round(weather["daily"][0]["feels_like"]["day"], 1)}°C\n'
                      f'Скорость ветра - {weather["daily"][0]["wind_speed"]} м/с.',
                      reply_markup=markup)
     change_data('states', user_id, 'main')
